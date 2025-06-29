@@ -74,7 +74,7 @@ const jobApplicationSchema = new mongoose.Schema({
     platform: {
         type: String,
         trim: true,
-        default: 'Manual Entry'
+        default: 'Platform'
     },
     jobLink: {
         type: String,
@@ -88,7 +88,7 @@ const jobApplicationSchema = new mongoose.Schema({
     location: {
         type: String,
         trim: true,
-        default: 'Not specified'
+        default: 'Location'
     },
     status: {
         type: String,
@@ -198,10 +198,10 @@ app.post('/api/applications', authenticate, async (req, res) => {
         const newApplication = new JobApplication({
             userId: req.user._id,
             company,
-            platform: platform || 'Manual Entry',
+            platform: platform || 'Platform',
             jobLink,
             role,
-            location: location || 'Not specified',
+            location: location || 'Location',
             status: status || 'applied',
             notes
         });
@@ -363,10 +363,10 @@ app.post('/api/scrape-job', authenticate, async (req, res) => {
             const fallbackApplication = new JobApplication({
                 userId: req.user._id,
                 company: `Company from ${domain}`,
-                platform: 'Manual Entry Required',
+                platform: 'Platform',
                 jobLink: req.body.url,
-                role: 'Position (Please update)',
-                location: 'Not specified',
+                role: 'Role',
+                location: 'Location',
                 status: 'applied',
                 notes: ''
             });
