@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobTrail</title>
+    <link href="./CSS/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        netflix: {
+                            red: '#E50914',
+                            dark: '#141414',
+                            gray: '#333333',
+                            light: '#F5F5F1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(229, 9, 20, 0.25);
+        }
+
+         /* Fix autofill styling */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #333333 inset !important;
+            -webkit-text-fill-color: white !important;
+            background-color: #333333 !important;
+            border: 1px solid #333333 !important;
+        }
+        
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #333333 inset !important;
+            border: 2px solid #E50914 !important;
+            outline: none !important;
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 640px) {
+            .hero-text {
+                font-size: 2.5rem;
+                line-height: 1.1;
+            }
+            
+            .mobile-padding {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Ensure touch targets are at least 44px */
+            .touch-target {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="bg-netflix-dark text-white min-h-screen">
+    <!-- Navbar -->
+    <nav class="top-0 w-full z-50 bg-netflix-dark/95 backdrop-blur-sm border-b border-netflix-gray/20">
+        <div class="max-w-7xl mx-auto mobile-padding px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-3 sm:py-4">
+                <div class="flex items-center">
+                    <h1 class="text-xl sm:text-2xl font-bold text-netflix-red text-glow">JobTrail</h1>
+                </div>
+                <div class="flex space-x-2 sm:space-x-4">
+                    <a href="login.html" class="px-4 sm:px-6 py-2 border-2 border-netflix-red text-netflix-red text-base sm:text-lg font-semibold rounded-lg hover:bg-netflix-red hover:text-white transition-all duration-300 touch-target">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-screen flex items-center justify-center pt-16 sm:pt-20">
+        <div class="max-w-7xl mx-auto mobile-padding px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div class="fade-in text-center lg:text-left">
+                <h1 class="hero-text text-4xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+                    <span class="text-netflix-red text-glow">Job Application</span><br>
+                    <span class="text-white">Tracker</span>
+                </h1>
+                <p class="text-lg sm:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-8 leading-relaxed">
+                    Track all your job applications in one place
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a href="#Instructions" class="px-6 sm:px-8 py-3 sm:py-4 bg-netflix-red text-white text-base sm:text-lg font-semibold rounded-lg hover:bg-red-700 transition-all duration-300 glow-effect transform hover:scale-105 touch-target">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+            <div class="order-first lg:order-last">
+                <div class="relative max-w-sm mx-auto lg:max-w-none lg:ml-8">
+                    <div class="bg-gradient-to-br from-netflix-red/20 to-netflix-gray/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm border border-netflix-red/30">
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="h-3 sm:h-4 bg-netflix-red/60 rounded w-3/4"></div>
+                            <div class="h-3 sm:h-4 bg-gray-600 rounded w-1/2"></div>
+                            <div class="h-3 sm:h-4 bg-gray-600 rounded w-5/6"></div>
+                            <div class="flex space-x-2 mt-4 sm:mt-6">
+                                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-netflix-red rounded-full animate-pulse"></div>
+                                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full animate-pulse delay-75"></div>
+                                <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full animate-pulse delay-150"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-12 sm:w-20 h-12 sm:h-20 bg-netflix-red/20 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-10 sm:w-16 h-10 sm:h-16 bg-netflix-red/10 rounded-full blur-lg"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructions Section -->
+    <section id="Instructions" class="py-16 sm:py-20 bg-netflix-gray/30">
+        <div class="max-w-4xl mx-auto mobile-padding px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 text-netflix-red">How It Works</h2>
+                <p class="text-lg sm:text-xl text-gray-300">Simple steps to organize your job search</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
+                <div class="text-center p-4 sm:p-6 bg-netflix-dark/50 rounded-xl border border-netflix-red/20 hover:border-netflix-red/50 transition-all duration-300">
+                    <div class="w-12 sm:w-16 h-12 sm:h-16 bg-netflix-red/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <span class="text-xl sm:text-2xl font-bold text-netflix-red">1</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-netflix-red">Add Applications</h3>
+                    <p class="text-sm sm:text-base text-gray-300">Quickly add job applications with company details, position, and application date</p>
+                </div>
+                
+                <div class="text-center p-4 sm:p-6 bg-netflix-dark/50 rounded-xl border border-netflix-red/20 hover:border-netflix-red/50 transition-all duration-300">
+                    <div class="w-12 sm:w-16 h-12 sm:h-16 bg-netflix-red/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <span class="text-xl sm:text-2xl font-bold text-netflix-red">2</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-netflix-red">Track Progress</h3>
+                    <p class="text-sm sm:text-base text-gray-300">Monitor application status from applied to interview to offer</p>
+                </div>
+                
+                <div class="text-center p-4 sm:p-6 bg-netflix-dark/50 rounded-xl border border-netflix-red/20 hover:border-netflix-red/50 transition-all duration-300">
+                    <div class="w-12 sm:w-16 h-12 sm:h-16 bg-netflix-red/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <span class="text-xl sm:text-2xl font-bold text-netflix-red">3</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-netflix-red">Get Insights</h3>
+                    <p class="text-sm sm:text-base text-gray-300">Analyze your job search performance with detailed analytics</p>
+                </div>
+            </div>
+
+            <!-- Video Section -->
+            <div class="text-center">
+                <h3 class="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-netflix-red">See JobTrail in Action</h3>
+                <div class="relative bg-netflix-dark rounded-2xl p-4 sm:p-8 border border-netflix-red/30">
+                    <div class="aspect-video bg-gradient-to-br from-netflix-red/20 to-netflix-gray/20 rounded-xl flex items-center justify-center">
+                        <button class="w-16 sm:w-20 h-16 sm:h-20 bg-netflix-red rounded-full flex items-center justify-center hover:bg-red-700 transition-all duration-300 transform hover:scale-105 touch-target">
+                            <svg class="w-6 sm:w-8 h-6 sm:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-gray-400 mt-3 sm:mt-4 text-sm sm:text-base">Watch our 2-minute demo video</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Feedback Button -->
+    <button class="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 w-12 sm:w-14 h-12 sm:h-14 bg-netflix-red rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition-all duration-300 z-40 transform hover:scale-105 touch-target">
+        <svg class="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+    </button>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="min-h-full flex items-center justify-center p-3 sm:p-4">
+            <div class="bg-netflix-dark rounded-xl p-4 sm:p-6 lg:p-8 border border-netflix-red/30 max-w-md w-full mx-2 sm:mx-4 shadow-xl glow-effect">
+                <div class="flex justify-between items-center mb-4 sm:mb-6">
+                    <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-netflix-red text-glow">We'd Love Your Feedback</h3>
+                    <button onclick="document.getElementById('feedback-modal').classList.add('hidden')" 
+                        class="text-gray-400 hover:text-netflix-red text-2xl transition-colors duration-300 touch-target w-8 h-8 flex items-center justify-center">&times;</button>
+                </div>
+                
+                <!-- Form Content -->
+                <div id="form-container">
+                    <form id="feedback-form" class="space-y-3 sm:space-y-4">
+                        <textarea id="feedback-text" rows="4" placeholder="Your feedback..." 
+                            class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-sm sm:text-base"></textarea>
+                        <input id="User-name" type="text" placeholder="Name" 
+                            class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-sm sm:text-base">
+                        <input id="feedback-email" type="email" placeholder="Email (optional)" 
+                            class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-sm sm:text-base">
+                        <div id="error-message" class="text-red-400 text-xs sm:text-sm hidden"></div>
+                         <button type="submit" id="submit-button"
+                            class="w-full py-2 sm:py-3 border-2 border-netflix-red text-netflix-red text-base sm:text-lg font-semibold rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300 touch-target">
+                            Submit Feedback
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Loading State (Hidden by default) -->
+                <div id="loading-state" class="hidden">
+                    <div class="flex justify-center items-center py-4 sm:py-6">
+                        <div class="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10 border-t-2 border-b-2 border-netflix-red"></div>
+                    </div>
+                    <p class="text-center text-gray-300 text-sm sm:text-base">Submitting your feedback...</p>
+                </div>
+                
+                <!-- Success Message (Hidden by default) -->
+                <div id="success-message" class="hidden space-y-3 sm:space-y-4 text-center">
+                    <div class="flex justify-center items-center py-3 sm:py-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 text-netflix-red" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h4 class="text-base sm:text-lg lg:text-xl font-bold text-netflix-red text-glow">Thank you for your feedback!</h4>
+                    <p class="text-gray-300 text-sm sm:text-base">We appreciate you taking the time to help us improve.</p>
+                    <button onclick="resetFeedbackModal()" 
+                        class="w-full py-2 sm:py-3 bg-netflix-red hover:bg-red-700 rounded-lg transition-all duration-300 text-white font-semibold mt-3 sm:mt-4 transform hover:scale-105 glow-effect touch-target">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-netflix-dark border-t border-netflix-gray/20 py-4 sm:py-5 mt-auto">
+        <div class="max-w-6xl mx-auto mobile-padding px-4 text-center">
+            <div class="text-center">
+                <p class="text-gray-400 text-sm sm:text-base">© 2025 JobTrail. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-netflix-dark');
+            } else {
+                navbar.classList.remove('bg-netflix-dark');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const feedbackForm = document.getElementById('feedback-form');
+            const formContainer = document.getElementById('form-container');
+            const loadingState = document.getElementById('loading-state');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Add event listener to floating feedback button
+            const feedbackButton = document.querySelector('.fixed.bottom-4');
+            if (feedbackButton) {
+                feedbackButton.addEventListener('click', showFeedbackModal);
+            }
+            
+            feedbackForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                // Clear any previous error
+                errorMessage.classList.add('hidden');
+                errorMessage.textContent = '';
+                
+                // Show loading state
+                formContainer.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+                
+                const feedbackText = document.getElementById('feedback-text').value;
+                const userName = document.getElementById('User-name').value;
+                const email = document.getElementById('feedback-email').value;
+                
+                try {
+                    const response = await fetch('/api/feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            feedback: feedbackText,
+                            Name: userName,
+                            email: email
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Hide loading state and show success message
+                        loadingState.classList.add('hidden');
+                        successMessage.classList.remove('hidden');
+                        
+                        // Reset the form
+                        feedbackForm.reset();
+                    } else {
+                        // Show error in the form
+                        loadingState.classList.add('hidden');
+                        formContainer.classList.remove('hidden');
+                        errorMessage.textContent = data.error || 'Failed to submit feedback. Please try again.';
+                        errorMessage.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Return to form and show error
+                    loadingState.classList.add('hidden');
+                    formContainer.classList.remove('hidden');
+                    errorMessage.textContent = 'An error occurred. Please try again later.';
+                    errorMessage.classList.remove('hidden');
+                }
+            });
+        });
+
+        function resetFeedbackModal() {
+            // Hide modal
+            document.getElementById('feedback-modal').classList.add('hidden');
+            
+            // Reset to initial state for next opening
+            document.getElementById('success-message').classList.add('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('form-container').classList.remove('hidden');
+        }
+
+        function showFeedbackModal() {
+            document.getElementById('feedback-modal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

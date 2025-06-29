@@ -1,0 +1,28 @@
+{
+  "name": "job-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
+    "cheerio": "^1.1.0",
+    "css-what": "^6.2.1",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1",
+    "nodemailer": "^7.0.3",
+    "nodemon": "^3.1.10",
+    "puppeteer": "^24.11.1",
+    "tailwindcss": "^4.1.11"
+  }
+}

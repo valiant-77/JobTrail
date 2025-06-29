@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobTrail - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        netflix: {
+                            red: '#E50914',
+                            dark: '#141414',
+                            gray: '#333333',
+                            light: '#F5F5F1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(229, 9, 20, 0.25);
+        }
+        .status-badge {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            display: inline-block;
+            position: relative;
+        }
+        .status-badge .delete-btn {
+            margin-left: 8px;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .status-badge .delete-btn:hover {
+            color: #ff5252;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #333333 inset;
+            transition: background-color 5000s ease-in-out 0s;
+            -webkit-text-fill-color: white;
+        }
+        input:autofill {
+            background-color: #333333;
+            color: white;
+        }
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .confirm-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .confirm-box {
+            background: #141414;
+            border: 1px solid #E50914;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.3);
+        }
+    </style>
+</head>
+<body class="hero-gradient text-white min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class=" top-0 w-full z-50 bg-netflix-dark/95 backdrop-blur-sm border-b border-netflix-gray/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-netflix-red text-glow">JobTrail</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userInfo" class="text-gray-300"></span>
+                    <button onclick="logout()" class="px-6 py-2 border-2 border-netflix-red text-netflix-red font-semibold rounded-lg hover:bg-netflix-red hover:text-white transition-all duration-300">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+     <div class="flex-1">
+    <main class="pt-20 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h2 class="text-center text-3xl font-bold mb-2 text-netflix-red text-glow">Job Applications Dashboard</h2>
+            <div class="text-center text-gray-400">
+                <span id="totalApplications">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-end">
+            <!-- Add Link Section (Left) -->
+            <div class="w-full lg:w-auto">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Add New Application</label>
+                <div class="flex gap-3">
+                    <input 
+                        type="url" 
+                        id="jobLink" 
+                        placeholder="Paste job link here..."
+                        class="flex-1 lg:w-80 bg-netflix-gray/50 border border-netflix-gray rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300"
+                    >
+                    <button 
+                        onclick="addJobFromLink()" 
+                        class="px-6 py-2 border-2 border-netflix-red text-netflix-red font-semibold rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300">
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Section (Right) -->
+            <div class="w-full lg:w-auto">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Search Applications</label>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search by company name..."
+                    onkeyup="handleSearch()"
+                    class="w-full lg:w-80 bg-netflix-gray/50 border border-netflix-gray rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300"
+                >
+            </div>
+        </div>
+
+        <!-- Custom Options Dropdown -->
+        <div class="mt-6 pt-3 mb-4 border-t border-netflix-gray/30">
+            <button 
+                onclick="toggleCustomOptions()" 
+                class="flex items-center gap-2 text-gray-300 hover:text-netflix-red transition-colors duration-300">
+                <span>Customize Status</span>
+                <svg id="dropdownIcon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Status Customization (Hidden by default) -->
+        <div id="customStatusSection" class="mt-4 mb-4 hidden">
+            <h3 class="text-lg font-semibold text-netflix-red mb-3">Customize Status Options</h3>
+            <div class="flex flex-wrap gap-2 mb-4" id="statusList">
+                <!-- Custom statuses will be loaded here -->
+            </div>
+            <div class="flex gap-3">
+                <input 
+                    type="text" 
+                    id="newStatus" 
+                    placeholder="Add new status..."
+                    class="bg-netflix-gray/50 border border-netflix-gray rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none"
+                    onkeypress="handleStatusKeyPress(event)"
+                >
+                <button 
+                    onclick="addCustomStatus()" 
+                    class="px-6 py-2 border-2 border-netflix-red text-netflix-red font-semibold rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300">
+                    Add Status
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="bg-netflix-gray/20 rounded-lg overflow-hidden border border-netflix-gray/30">
+            <div class="overflow-x-auto">
+                <table class="w-full" id="applicationsTable">
+                    <thead class="bg-netflix-gray/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Sl.No</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Company</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Platform</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Job Link</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Role</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Date Added</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Location</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Status</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Notes</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-netflix-red">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr id="loadingRow">
+                            <td colspan="10" class="px-4 py-8 text-center text-gray-400">
+                                Loading applications...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+       
+       <!-- Add Custom Row Button -->
+        <div class="mt-4 text-center">
+            <button 
+                onclick="addCustomRow()" 
+                class="px-4 py-2 border border-netflix-red text-netflix-red text-base font-medium rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300">
+                + Add Custom Row
+            </button>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div id="paginationContainer" class="mt-6 flex justify-center items-center space-x-4">
+            <button 
+                id="prevBtn" 
+                onclick="changePage(currentPage - 1)" 
+                class="px-4 py-2 border border-netflix-red text-netflix-red rounded-lg hover:bg-netflix-red/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                Previous
+            </button>
+            
+            <div id="pageNumbers" class="flex space-x-2">
+                <!-- Page numbers will be generated here -->
+            </div>
+            
+            <button 
+                id="nextBtn" 
+                onclick="changePage(currentPage + 1)" 
+                class="px-4 py-2 border border-netflix-red text-netflix-red rounded-lg hover:bg-netflix-red/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                Next
+            </button>
+        </div>
+
+        <!-- Pagination Info -->
+        <div class="mt-4 mb-4 text-center text-gray-400">
+            <span id="paginationInfo">Showing 0 - 0 of 0 applications</span>
+        </div>
+
+
+        
+      </main>
+    </div>
+
+    <!-- Custom Row Modal -->
+    <div id="customRowModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="min-h-full flex items-center justify-center p-4">
+            <div class="bg-netflix-dark rounded-xl p-6 border border-netflix-red/30 max-w-2xl w-full shadow-xl glow-effect">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-2xl font-bold text-netflix-red text-glow">Add Custom Application</h3>
+                    <button onclick="closeCustomRowModal()" class="text-gray-400 hover:text-netflix-red text-2xl">&times;</button>
+                </div>
+                
+                <form id="customRowForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="customCompany" placeholder="Company Name" required class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none">
+                    <input type="text" id="customPlatform" placeholder="Platform (e.g., LinkedIn, Indeed)" class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none">
+                    <input type="url" id="customLink" placeholder="Job Link (optional)" class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none">
+                    <input type="text" id="customRole" placeholder="Role/Position" required class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none">
+                    <input type="text" id="customLocation" placeholder="Location" class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red focus:outline-none">
+                    <select id="customStatus" class="bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white focus:ring-2 focus:ring-netflix-red focus:border-netflix-red">
+                        <option value="applied">Applied</option>
+                        <option value="round1">Round 1</option>
+                        <option value="round2">Round 2</option>
+                        <option value="interview">Interview</option>
+                        <option value="offer">Offer</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <textarea id="customNotes" placeholder="Notes (optional)" rows="3" class="md:col-span-2 bg-netflix-gray/50 border border-netflix-gray rounded-lg p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-netflix-red focus:border-netflix-red resize-none"></textarea>
+                    
+                    <div class="md:col-span-2 flex gap-4 mt-4">
+                        <button type="button" onclick="closeCustomRowModal()" class="flex-1 py-3 border border-netflix-gray text-gray-300 rounded-lg hover:bg-netflix-gray/20 transition-all duration-300">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submitButton" class="flex-1 py-3 bg-netflix-red text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-300 glow-effect">
+                            Add Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+     <!-- Footer -->
+    <footer class="bg-netflix-gray/20 border-t border-netflix-gray/20 py-2.5 md:py-5">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm md:text-base">© 2025 JobTrail. All rights reserved.</p>
+        </div>
+    </footer>
+
+ <!-- Confirmation Modal -->
+    <div id="confirmModal" class="confirm-modal hidden">
+        <div class="confirm-box">
+            <h3 class="text-xl font-semibold text-netflix-red mb-4" id="confirmTitle">Confirm Action</h3>
+            <p class="text-gray-300 mb-6" id="confirmMessage">Are you sure?</p>
+            <div class="flex gap-4">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2 border border-netflix-gray text-gray-300 rounded-lg hover:bg-netflix-gray/20 transition-all duration-300">
+                    No
+                </button>
+                <button onclick="confirmAction()" class="flex-1 py-2 bg-netflix-red text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-300">
+                    Yes
+                </button>
+            </div>
+        </div>
+</div>
+
+    <script>
+        // Global variables
+        let applications = [];
+        let customStatuses = [];
+        let defaultStatuses = ['applied', 'round1', 'round2', 'interview', 'offer', 'rejected'];
+        let searchTimeout;
+        let currentPage = 1;
+        let itemsPerPage = 15;
+        let totalPages = 1;
+        let filteredApplications = [];
+        let confirmCallback = null;
+
+        // API Helper functions
+        async function apiCall(url, options = {}) {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const response = await fetch(url, { ...defaultOptions, ...options });
+            
+            if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return response.json();
+        }
+          
+            // Pagination functions
+        function changePage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderApplications(filteredApplications);
+        }
+
+        function updatePaginationControls() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageNumbers = document.getElementById('pageNumbers');
+            const paginationInfo = document.getElementById('paginationInfo');
+            
+            // Update button states
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Generate page numbers
+            let pageNumbersHTML = '';
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            // Adjust start page if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            // Add first page and ellipsis if needed
+            if (startPage > 1) {
+                pageNumbersHTML += `<button onclick="changePage(1)" class="px-3 py-2 text-sm border border-netflix-gray text-gray-300 rounded hover:bg-netflix-red/10 hover:text-netflix-red transition-all duration-300">1</button>`;
+                if (startPage > 2) {
+                    pageNumbersHTML += `<span class="px-2 text-gray-500">...</span>`;
+                }
+            }
+            
+            // Add visible page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === currentPage;
+                pageNumbersHTML += `
+                    <button 
+                        onclick="changePage(${i})" 
+                        class="px-3 py-2 text-sm border rounded transition-all duration-300 ${
+                            isActive 
+                                ? 'bg-netflix-red text-white border-netflix-red' 
+                                : 'border-netflix-gray text-gray-300 hover:bg-netflix-red/10 hover:text-netflix-red'
+                        }">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // Add last page and ellipsis if needed
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    pageNumbersHTML += `<span class="px-2 text-gray-500">...</span>`;
+                }
+                pageNumbersHTML += `<button onclick="changePage(${totalPages})" class="px-3 py-2 text-sm border border-netflix-gray text-gray-300 rounded hover:bg-netflix-red/10 hover:text-netflix-red transition-all duration-300">${totalPages}</button>`;
+            }
+            
+            pageNumbers.innerHTML = pageNumbersHTML;
+            
+            // Update pagination info
+            const startItem = filteredApplications.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredApplications.length);
+            paginationInfo.textContent = `Showing ${startItem} - ${endItem} of ${filteredApplications.length} applications`;
+        }
+
+        // Initialize page
+        async function initializePage() {
+            try {
+                await loadUserProfile();
+                await loadApplications();
+                await loadCustomStatuses();
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                showNotification('Error loading data. Please refresh the page.', 'error');
+            }
+        }
+
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const user = await apiCall('/api/profile');
+                document.getElementById('userInfo').textContent = `Welcome, ${user.username}`;
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
+        // Load applications
+        async function loadApplications() {
+            try {
+                applications = await apiCall('/api/applications');
+                renderApplications(applications);
+                updateApplicationCount();
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('tableBody').innerHTML = `
+                    <tr><td colspan="10" class="px-4 py-8 text-center text-red-400">Error loading applications</td></tr>
+                `;
+            }
+        }
+
+        // Load custom statuses
+        async function loadCustomStatuses() {
+            try {
+                customStatuses = await apiCall('/api/custom-statuses');
+                renderCustomStatuses();
+                updateStatusDropdowns();
+            } catch (error) {
+                console.error('Error loading custom statuses:', error);
+            }
+        }
+
+        // Render applications in table
+        // Replace the entire renderApplications function
+        function renderApplications(apps) {
+            filteredApplications = apps;
+            totalPages = Math.ceil(apps.length / itemsPerPage);
+            
+            // Reset to page 1 if current page is beyond total pages
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedApps = apps.slice(startIndex, endIndex);
+            
+            const tableBody = document.getElementById('tableBody');
+            
+            if (apps.length === 0) {
+                tableBody.innerHTML = `
+                    <tr><td colspan="10" class="px-4 py-8 text-center text-gray-400">No applications found. Add your first job application!</td></tr>
+                `;
+                updatePaginationControls();
+                return;
+            }
+
+            tableBody.innerHTML = paginatedApps.map((app, index) => `
+                <tr class="border-b border-netflix-gray/20 hover:bg-netflix-gray/20 transition-colors" data-app-id="${app._id}">
+                    <td class="px-4 py-3">${startIndex + index + 1}</td>
+                    <td class="px-4 py-3 font-medium">${app.company}</td>
+                    <td class="px-4 py-3">${app.platform}</td>
+                    <td class="px-4 py-3">
+                        ${app.jobLink ? `<a href="${app.jobLink}" class="text-netflix-red hover:underline" target="_blank">View Job</a>` : 'No Link'}
+                    </td>
+                    <td class="px-4 py-3">${app.role}</td>
+                    <td class="px-4 py-3">${new Date(app.dateAdded).toLocaleDateString()}</td>
+                    <td class="px-4 py-3">${app.location}</td>
+                    <td class="px-4 py-3">
+                        <select class="bg-netflix-gray border border-netflix-gray rounded px-2 py-1 text-sm text-white" onchange="updateApplicationStatus('${app._id}', this.value)">
+                            ${getAllStatuses().map(status => 
+                                `<option value="${status}" ${status === app.status ? 'selected' : ''}>${formatStatusDisplay(status)}</option>`
+                            ).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-3">
+                        <input type="text" 
+                            value="${app.notes || ''}" 
+                            placeholder="Add note..." 
+                            class="bg-netflix-gray/50 border border-netflix-gray rounded px-2 py-1 text-sm text-white w-full"
+                            onblur="updateApplicationNotes('${app._id}', this.value)"
+                            onkeypress="handleNotesKeyPress(event, '${app._id}', this)">
+                    </td>
+                    <td class="px-4 py-3">
+                        <button onclick="editApplication('${app._id}')" class="text-blue-400 hover:text-blue-300 text-sm mr-3">Edit</button>
+                        <button onclick="deleteApplication('${app._id}')" class="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updatePaginationControls();
+        }
+
+        // Render custom statuses
+        function renderCustomStatuses() {
+            const statusList = document.getElementById('statusList');
+            const defaultStatusesHtml = defaultStatuses.map(status => 
+                `<span class="status-badge">${formatStatusDisplay(status)}</span>`
+            ).join('');
+            
+            const customStatusesHtml = customStatuses.map(status => 
+                `<span class="status-badge">${status.statusName}<span class="delete-btn" onclick="deleteCustomStatus('${status._id}')">&times;</span></span>`
+            ).join('');
+
+            statusList.innerHTML = defaultStatusesHtml + customStatusesHtml;
+        }
+
+        // Get all statuses (default + custom)
+        function getAllStatuses() {
+            return [...defaultStatuses, ...customStatuses.map(s => s.statusName.toLowerCase())];
+        }
+
+        // Format status for display
+        function formatStatusDisplay(status) {
+            return status.charAt(0).toUpperCase() + status.slice(1).replace(/(\d+)/g, ' $1');
+        }
+
+        // Update status dropdowns
+        function updateStatusDropdowns() {
+            const statusSelects = document.querySelectorAll('select:not(#customStatus)');
+            statusSelects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = getAllStatuses().map(status => 
+                    `<option value="${status}" ${status === currentValue ? 'selected' : ''}>${formatStatusDisplay(status)}</option>`
+                ).join('');
+            });
+
+            // Update modal dropdown
+            const modalSelect = document.getElementById('customStatus');
+            modalSelect.innerHTML = getAllStatuses().map(status => 
+                `<option value="${status}">${formatStatusDisplay(status)}</option>`
+            ).join('');
+        }
+
+        // Handle search with debouncing
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const query = document.getElementById('searchInput').value.trim();
+                
+                // Reset to first page when searching
+                currentPage = 1;
+                
+                if (query === '') {
+                    renderApplications(applications);
+                    return;
+                }
+
+                try {
+                    const searchResults = await apiCall(`/api/applications/search?query=${encodeURIComponent(query)}`);
+                    renderApplications(searchResults);
+                } catch (error) {
+                    console.error('Error searching applications:', error);
+                    showNotification('Error searching applications', 'error');
+                }
+            }, 300);
+        }
+
+        // Add job from link
+        async function addJobFromLink() {
+            const link = document.getElementById('jobLink').value.trim();
+            if (!link) {
+                showNotification('Please enter a job link', 'error');
+                return;
+            }
+
+            // Show loading state
+            const addButton = document.querySelector('button[onclick="addJobFromLink()"]');
+            const originalText = addButton.textContent;
+            addButton.textContent = 'Scraping...';
+            addButton.disabled = true;
+
+            try {
+                showNotification('Scraping job details...', 'info');
+                
+                const result = await apiCall('/api/scrape-job', {
+                    method: 'POST',
+                    body: JSON.stringify({ url: link })
+                });
+
+                if (result.application) {
+                    applications.unshift(result.application);
+                    renderApplications(applications);
+                    updateApplicationCount();
+                    document.getElementById('jobLink').value = '';
+                    
+                    if (result.warning) {
+                        showNotification(result.warning, 'warning');
+                    } else {
+                        showNotification('Job application added successfully!', 'success');
+                    }
+                }
+            } catch (error) {
+                console.error('Error scraping job:', error);
+                showNotification('Error scraping job. Please try adding manually.', 'error');
+            } finally {
+                // Reset button state
+                addButton.textContent = originalText;
+                addButton.disabled = false;
+            }
+        }
+
+        // Add custom status
+        async function addCustomStatus() {
+            const statusName = document.getElementById('newStatus').value.trim();
+            if (!statusName) {
+                showNotification('Please enter a status name', 'error');
+                return;
+            }
+
+            try {
+                const newStatus = await apiCall('/api/custom-statuses', {
+                    method: 'POST',
+                    body: JSON.stringify({ statusName })
+                });
+
+                customStatuses.push(newStatus);
+                renderCustomStatuses();
+                updateStatusDropdowns();
+                document.getElementById('newStatus').value = '';
+                showNotification('Custom status added successfully', 'success');
+            } catch (error) {
+                console.error('Error adding custom status:', error);
+                showNotification('Error adding custom status', 'error');
+            }
+        }
+
+        // Delete custom status
+        async function deleteCustomStatus(statusId) {
+            showConfirmModal(
+                'Are you sure you want to delete this custom status?',
+                'Delete Status',
+                async () => {
+                    try {
+                        await apiCall(`/api/custom-statuses/${statusId}`, { method: 'DELETE' });
+                        customStatuses = customStatuses.filter(status => status._id !== statusId);
+                        renderCustomStatuses();
+                        updateStatusDropdowns();
+                        showNotification('Custom status deleted successfully', 'success');
+                    } catch (error) {
+                        console.error('Error deleting custom status:', error);
+                        showNotification('Error deleting custom status', 'error');
+                    }
+                }
+            );
+        }
+
+        // Update application status
+        async function updateApplicationStatus(appId, newStatus) {
+            try {
+                await apiCall(`/api/applications/${appId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                // Update local data
+                const app = applications.find(a => a._id === appId);
+                if (app) app.status = newStatus;
+
+                showNotification('Status updated successfully', 'success');
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showNotification('Error updating status', 'error');
+                // Reload to reset the dropdown
+                loadApplications();
+            }
+        }
+
+        // Update application notes
+        async function updateApplicationNotes(appId, notes) {
+            try {
+                await apiCall(`/api/applications/${appId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ notes })
+                });
+
+                // Update local data
+                const app = applications.find(a => a._id === appId);
+                if (app) app.notes = notes;
+
+                showNotification('Notes updated successfully', 'success');
+            } catch (error) {
+                console.error('Error updating notes:', error);
+                showNotification('Error updating notes', 'error');
+            }
+        }
+
+        // Delete application
+        async function deleteApplication(appId) {
+            showConfirmModal(
+                'Are you sure you want to delete this application?',
+                'Delete Application',
+                async () => {
+                    try {
+                        await apiCall(`/api/applications/${appId}`, { method: 'DELETE' });
+                        applications = applications.filter(app => app._id !== appId);
+                        renderApplications(applications);
+                        updateApplicationCount();
+                        showNotification('Application deleted successfully', 'success');
+                    } catch (error) {
+                        console.error('Error deleting application:', error);
+                        showNotification('Error deleting application', 'error');
+                    }
+                }
+            );
+        }
+
+        // Handle custom row form submission
+        document.getElementById('customRowForm').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                company: document.getElementById('customCompany').value.trim(),
+                platform: document.getElementById('customPlatform').value.trim() || 'Manual Entry',
+                jobLink: document.getElementById('customLink').value.trim(),
+                role: document.getElementById('customRole').value.trim(),
+                location: document.getElementById('customLocation').value.trim() || 'Not specified',
+                status: document.getElementById('customStatus').value,
+                notes: document.getElementById('customNotes').value.trim()
+            };
+
+            if (!formData.company || !formData.role) {
+                showNotification('Company and role are required', 'error');
+                return;
+            }
+
+            try {
+                if (isEditing) {
+                    // Update existing application
+                    const updatedApplication = await apiCall(`/api/applications/${editingAppId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(formData)
+                    });
+
+                    // Update local data
+                    const index = applications.findIndex(app => app._id === editingAppId);
+                    if (index !== -1) {
+                        applications[index] = updatedApplication;
+                    }
+                    
+                    showNotification('Application updated successfully', 'success');
+                } else {
+                    // Create new application
+                    const newApplication = await apiCall('/api/applications', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+
+                    applications.unshift(newApplication);
+                    updateApplicationCount();
+                    showNotification('Application added successfully', 'success');
+                }
+                
+                renderApplications(applications);
+                closeCustomRowModal();
+            } catch (error) {
+                console.error('Error saving application:', error);
+                showNotification(isEditing ? 'Error updating application' : 'Error adding application', 'error');
+            }
+        };
+
+        // Utility functions
+        function toggleCustomOptions() {
+            const customSection = document.getElementById('customStatusSection');
+            const dropdownIcon = document.getElementById('dropdownIcon');
+            
+            if (customSection.classList.contains('hidden')) {
+                customSection.classList.remove('hidden');
+                dropdownIcon.style.transform = 'rotate(180deg)';
+            } else {
+                customSection.classList.add('hidden');
+                dropdownIcon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function addCustomRow() {
+            document.getElementById('customRowModal').classList.remove('hidden');
+        }
+
+        function closeCustomRowModal() {
+            document.getElementById('customRowModal').classList.add('hidden');
+            document.getElementById('customRowForm').reset();
+            
+            // Reset edit state
+            isEditing = false;
+            editingAppId = null;
+            document.getElementById('modalTitle').textContent = 'Add Custom Application';
+            document.getElementById('submitButton').textContent = 'Add Application';
+        }
+
+        function updateApplicationCount() {
+            const count = applications.length;
+            document.getElementById('totalApplications').textContent = 
+                `Total Applications: ${count}`;
+        }
+
+        function handleStatusKeyPress(event) {
+            if (event.key === 'Enter') {
+                addCustomStatus();
+            }
+        }
+
+        function handleNotesKeyPress(event, appId, input) {
+            if (event.key === 'Enter') {
+                input.blur(); // This will trigger the onblur event
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform ${
+                type === 'error' ? 'bg-red-600 text-white' : 
+                type === 'success' ? 'bg-green-600 text-white' : 
+                type === 'warning' ? 'bg-yellow-600 text-white' : 
+                'bg-blue-600 text-white'
+            }`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+           
+        // Global variable to track if we're editing
+            let isEditing = false;
+            let editingAppId = null;
+
+            // Edit application function
+            function editApplication(appId) {
+                const app = applications.find(a => a._id === appId);
+                if (!app) return;
+                
+                isEditing = true;
+                editingAppId = appId;
+                
+                // Update modal title and button
+                document.getElementById('modalTitle').textContent = 'Edit Application';
+                document.getElementById('submitButton').textContent = 'Update Application';
+                
+                // Populate form with existing data
+                document.getElementById('customCompany').value = app.company;
+                document.getElementById('customPlatform').value = app.platform;
+                document.getElementById('customLink').value = app.jobLink || '';
+                document.getElementById('customRole').value = app.role;
+                document.getElementById('customLocation').value = app.location;
+                document.getElementById('customStatus').value = app.status;
+                document.getElementById('customNotes').value = app.notes || '';
+                
+                // Show modal
+                document.getElementById('customRowModal').classList.remove('hidden');
+            }
+
+
+                function showConfirmModal(message, title = 'Confirm Action', callback) {
+                    document.getElementById('confirmTitle').textContent = title;
+                    document.getElementById('confirmMessage').textContent = message;
+                    document.getElementById('confirmModal').classList.remove('hidden');
+                    confirmCallback = callback;
+                }
+
+                function closeConfirmModal() {
+                    document.getElementById('confirmModal').classList.add('hidden');
+                    confirmCallback = null;
+                }
+
+                function confirmAction() {
+                    if (confirmCallback) {
+                        confirmCallback();
+                    }
+                    closeConfirmModal();
+                }
+
+        // Initialize page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

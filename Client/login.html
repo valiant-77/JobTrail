@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Login - JobTrail</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        netflix: {
+                            red: '#E50914',
+                            dark: '#141414',
+                            gray: '#333333',
+                            light: '#F5F5F1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(229, 9, 20, 0.25);
+        }
+
+        /* Enhanced mobile input styling */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #333333 inset;
+            transition: background-color 5000s ease-in-out 0s;
+            -webkit-text-fill-color: white;
+        }
+        
+        input:autofill {
+            background-color: #333333;
+            color: white;
+        }
+
+        /* Mobile-specific improvements */
+        @media (max-width: 640px) {
+            .mobile-safe-area {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            
+            /* Prevent zoom on input focus */
+            input[type="text"], input[type="password"] {
+                font-size: 16px !important;
+            }
+            
+            /* Better touch targets */
+            button, input, label {
+                touch-action: manipulation;
+            }
+        }
+
+        /* Landscape mobile adjustments */
+        @media (max-height: 500px) and (max-width: 900px) {
+            .landscape-compact {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+            
+            .landscape-form {
+                padding: 1rem;
+            }
+        }
+
+        /* Keyboard visibility handling */
+        @media (max-height: 600px) {
+            .keyboard-adjust {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-netflix-dark text-white min-h-screen flex flex-col hero-gradient">
+    <!-- Compact Mobile Navbar -->
+    <nav class="bg-netflix-dark/95 backdrop-blur-sm border-b border-netflix-gray/20 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-12 sm:h-16">
+                <div class="flex items-center">
+                    <span class="text-xl sm:text-2xl font-bold text-netflix-red text-glow">JobTrail</span>
+                </div>
+                <div class="flex items-center">
+                    <a href="./index.html" class="px-3 py-1.5 sm:px-6 sm:py-2 border-2 border-netflix-red text-netflix-red text-sm sm:text-lg font-semibold rounded-lg hover:bg-netflix-red hover:text-white transition-all duration-300">
+                        Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Form Container -->
+    <div class="flex-grow flex items-center justify-center px-3 sm:px-4 py-4 sm:py-8 landscape-compact keyboard-adjust">
+        <div class="bg-netflix-dark/80 backdrop-blur-sm p-4 sm:p-6 lg:p-8 rounded-xl border border-netflix-red/30 w-full max-w-sm sm:max-w-md glow-effect fade-in landscape-form">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-4 sm:mb-6 text-netflix-red text-glow">Welcome Back!</h2>
+            
+            <!-- Message Display Area -->
+            <div id="messageDisplay" style="display: none;" class="text-center mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg text-sm sm:text-base"></div>
+            
+            <form id="loginForm" class="space-y-4 sm:space-y-6">
+                <!-- Username Input -->
+                <div>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2" for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        autocomplete="username"
+                        inputmode="text"
+                        class="w-full px-3 sm:px-4 py-3 sm:py-3.5 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-base"
+                        placeholder="Enter your username"
+                        required
+                    />
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2" for="password">Password</label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            autocomplete="current-password"
+                            class="w-full px-3 sm:px-4 py-3 sm:py-3.5 pr-12 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-base"
+                            placeholder="Enter your password"
+                            required
+                        />
+                        <button 
+                            type="button" 
+                            id="togglePassword" 
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-netflix-red transition-colors duration-300 p-1 min-w-[32px] min-h-[32px] flex items-center justify-center"
+                            aria-label="Toggle password visibility"
+                        >
+                            <span class="text-lg">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                        class="w-4 h-4 sm:w-5 sm:h-5 text-netflix-red bg-netflix-gray border-netflix-gray rounded focus:ring-netflix-red focus:ring-2"
+                    />
+                    <label for="rememberMe" class="ml-3 text-sm sm:text-base text-gray-300 select-none">Remember Me</label>
+                </div>
+
+                <!-- Login Button -->
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="w-full py-3 sm:py-3.5 border-2 border-netflix-red text-netflix-red text-base sm:text-lg font-semibold rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span id="loginButtonText">Login</span>
+                    <span id="loginButtonSpinner" class="hidden">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-current inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Logging in...
+                    </span>
+                </button>
+
+                <!-- Signup Link -->
+                <p class="text-center mt-4 sm:mt-6 text-sm sm:text-base text-gray-300">
+                    Don't have an account? 
+                    <a href="signup.html" class="text-netflix-red hover:underline font-semibold transition-all duration-300 active:scale-95">Sign up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Compact Mobile Footer -->
+    <footer class="bg-netflix-dark border-t border-netflix-gray/20 py-2 sm:py-2.5 md:py-5 mt-auto mobile-safe-area">
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 text-center">
+            <p class="text-gray-400 text-xs sm:text-sm md:text-base">&copy; 2025 JobTrail. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Login Form -->
+    <script>
+        function showMessage(message, isError = false) {
+            const messageDisplay = document.getElementById('messageDisplay');
+            messageDisplay.textContent = message;
+            messageDisplay.style.display = 'block';
+            
+            // Style the message based on type
+            if (isError) {
+                messageDisplay.className = 'text-center mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-red-900/50 border border-red-500/50 text-red-300 text-sm sm:text-base';
+            } else {
+                messageDisplay.className = 'text-center mb-3 sm:mb-4 p-2 sm:p-3 rounded-lg bg-green-900/50 border border-green-500/50 text-green-300 text-sm sm:text-base';
+            }
+        }
+        
+        // Enhanced password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('span');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.textContent = '🔒'; 
+            } else {
+                passwordInput.type = 'password';
+                icon.textContent = '👁️'; 
+            }
+        });
+        
+        // Enhanced loading state management
+        function setLoadingState(isLoading) {
+            const button = document.getElementById('loginButton');
+            const buttonText = document.getElementById('loginButtonText');
+            const buttonSpinner = document.getElementById('loginButtonSpinner');
+            
+            if (isLoading) {
+                button.disabled = true;
+                buttonText.classList.add('hidden');
+                buttonSpinner.classList.remove('hidden');
+            } else {
+                button.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonSpinner.classList.add('hidden');
+            }
+        }
+        
+        // Check if credentials are stored
+        const savedUsername = localStorage.getItem('rememberMeUsername');
+        const savedPassword = localStorage.getItem('rememberMePassword');
+
+        if (savedUsername && savedPassword) {
+            document.getElementById('username').value = savedUsername;
+            document.getElementById('password').value = savedPassword;
+            document.getElementById('rememberMe').checked = true;
+        }
+
+        // Handle viewport changes for mobile keyboards
+        let initialViewportHeight = window.innerHeight;
+        
+        window.addEventListener('resize', function() {
+            // Detect keyboard open/close on mobile
+            if (window.innerHeight < initialViewportHeight * 0.75) {
+                document.body.classList.add('keyboard-open');
+            } else {
+                document.body.classList.remove('keyboard-open');
+            }
+        });
+
+        // Enhanced form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            setLoadingState(true);
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Basic validation
+            if (!username || !password) {
+                showMessage('Please fill in all fields.', true);
+                setLoadingState(false);
+                return;
+            }
+
+            try {
+                // Send login request to the backend
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Save the JWT token
+                    localStorage.setItem('authToken', data.token);
+
+                    // Handle remember me functionality
+                    if (rememberMe) {
+                        localStorage.setItem('rememberMeUsername', username);
+                        localStorage.setItem('rememberMePassword', password);
+                    } else {
+                        localStorage.removeItem('rememberMeUsername');
+                        localStorage.removeItem('rememberMePassword');
+                    }
+
+                    // Show success message and redirect
+                    showMessage('Login successful! Redirecting...', false);
+                    setTimeout(() => {
+                        window.location.href = './dashboard.html';
+                    }, 1000);
+                } else {
+                    showMessage(data.error || 'Login failed. Please check your credentials.', true);
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                showMessage('Network error. Please check your connection and try again.', true);
+            } finally {
+                setLoadingState(false);
+            }
+        });
+
+        // Prevent double-tap zoom on buttons
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>

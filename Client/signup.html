@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Signup - JobTrail</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        netflix: {
+                            red: '#E50914',
+                            dark: '#141414',
+                            gray: '#333333',
+                            light: '#F5F5F1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #141414 0%, #1a1a1a 50%, #0f0f0f 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(229, 9, 20, 0.25);
+        }
+
+        /* Enhanced autofill styles */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #333333 inset;
+            transition: background-color 5000s ease-in-out 0s;
+            -webkit-text-fill-color: white;
+        }
+        
+        input:autofill {
+            background-color: #333333;
+            color: white;
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 640px) {
+            /* Ensure inputs are properly sized on mobile */
+            input[type="text"], 
+            input[type="password"] {
+                font-size: 16px; /* Prevents zoom on iOS */
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+            
+            /* Optimize button sizing for touch */
+            button {
+                min-height: 44px; /* Apple's recommended touch target */
+                touch-action: manipulation;
+            }
+            
+            /* Improve scrolling on mobile */
+            body {
+                -webkit-overflow-scrolling: touch;
+                overflow-x: hidden;
+            }
+            
+            /* Better focus states for mobile */
+            input:focus {
+                transform: scale(1.02);
+                transition: all 0.2s ease;
+            }
+        }
+
+        /* Safe area handling for notched devices */
+        @supports (padding: max(0px)) {
+            .safe-area-top {
+                padding-top: max(16px, env(safe-area-inset-top));
+            }
+            .safe-area-bottom {
+                padding-bottom: max(16px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.3), transparent);
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-netflix-dark text-white min-h-screen flex flex-col hero-gradient">
+    <!-- Navbar with safe area -->
+    <nav class="bg-netflix-dark/95 backdrop-blur-sm border-b border-netflix-gray/20 safe-area-top">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-14 sm:h-16">
+                <div class="flex items-center">
+                    <span class="text-xl sm:text-2xl font-bold text-netflix-red text-glow">JobTrail</span>
+                </div>
+                <div class="flex items-center">
+                    <a href="./index.html" class="px-4 py-2 sm:px-6 border-2 border-netflix-red text-netflix-red text-sm sm:text-lg font-semibold rounded-lg hover:bg-netflix-red hover:text-white transition-all duration-300 touch-manipulation">
+                        Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Form - Enhanced mobile layout -->
+    <div class="flex-grow flex items-center justify-center px-4 py-4 sm:py-8">
+        <div class="bg-netflix-dark/80 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl border border-netflix-red/30 w-full max-w-sm sm:max-w-md glow-effect fade-in">
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 text-netflix-red text-glow">Join JobTrail</h2>
+            
+            <!-- Message Display Area -->
+            <div id="messageDisplay" style="display: none;" class="text-center mb-4 p-3 rounded-lg text-sm"></div>
+            
+            <form id="signupForm" class="space-y-4 sm:space-y-6">
+                <!-- Username Input -->
+                <div>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2" for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        autocomplete="username"
+                        class="w-full px-4 py-3 sm:py-3 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-base"
+                        placeholder="Choose a username"
+                        required
+                        maxlength="50"
+                    />
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label class="block text-gray-300 text-sm font-semibold mb-2" for="password">Password</label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            autocomplete="new-password"
+                            class="w-full px-4 py-3 sm:py-3 pr-12 bg-netflix-gray/50 border border-netflix-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-all duration-300 text-white placeholder-gray-400 text-base"
+                            placeholder="Create a password"
+                            required
+                            minlength="6"
+                        />
+                        <button 
+                            type="button" 
+                            id="togglePassword" 
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-netflix-red transition-colors duration-300 w-8 h-8 flex items-center justify-center touch-manipulation"
+                            aria-label="Toggle password visibility"
+                        >
+                            <span id="eyeIcon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Signup Button -->
+                <button
+                    type="submit"
+                    id="submitButton"
+                    class="w-full py-3 sm:py-3 border-2 border-netflix-red text-netflix-red text-base sm:text-lg font-semibold rounded-lg hover:bg-netflix-red/5 hover:border-netflix-red/80 transition-all duration-300 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span id="buttonText">Create Account</span>
+                </button>
+
+                <!-- Note - Mobile optimized text -->
+                <div class="bg-netflix-gray/30 border border-netflix-gray/50 rounded-lg p-3 sm:p-4 mt-4">
+                    <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                        <strong class="text-netflix-red">Note:</strong><br>
+                        • Simple signup with just username<br>
+                        • Remember your password - no recovery available
+                    </p>
+                </div>
+
+                <!-- Login Link -->
+                <p class="text-center mt-4 sm:mt-6 text-sm text-gray-300">
+                    Already have an account? 
+                    <a href="./login.html" class="text-netflix-red hover:underline font-semibold transition-all duration-300 touch-manipulation">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer with safe area -->
+    <footer class="bg-netflix-dark border-t border-netflix-gray/20 py-3 sm:py-4 md:py-5 mt-auto safe-area-bottom">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-xs sm:text-sm md:text-base">&copy; 2025 JobTrail. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Enhanced Mobile Signup -->
+    <script>
+        function showMessage(message, isError = false) {
+            const messageDisplay = document.getElementById('messageDisplay');
+            messageDisplay.textContent = message;
+            messageDisplay.style.display = 'block';
+            
+            // Style the message based on type
+            if (isError) {
+                messageDisplay.className = 'text-center mb-4 p-3 rounded-lg bg-red-900/50 border border-red-500/50 text-red-300 text-sm';
+            } else {
+                messageDisplay.className = 'text-center mb-4 p-3 rounded-lg bg-green-900/50 border border-green-500/50 text-green-300 text-sm';
+            }
+            
+            // Auto-hide message after 5 seconds
+            setTimeout(() => {
+                messageDisplay.style.display = 'none';
+            }, 5000);
+        }
+
+        // Enhanced password toggle with better mobile UX
+        document.getElementById('togglePassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🔒';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+
+        // Enhanced form validation
+        function validateForm() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (username.length < 3) {
+                showMessage('Username must be at least 3 characters long.', true);
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long.', true);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Enhanced form submission with loading state
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) return;
+
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+            buttonText.textContent = 'Creating Account...';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Registration successful! Redirecting to login...', false);
+                    buttonText.textContent = 'Success!';
+                    
+                    setTimeout(() => {
+                        window.location.href = './login.html';
+                    }, 2000);
+                } else {
+                    showMessage(data.error || 'Registration failed. Please try again.', true);
+                    resetButton();
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showMessage('Network error. Please check your connection and try again.', true);
+                resetButton();
+            }
+        });
+
+        function resetButton() {
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            
+            submitButton.disabled = false;
+            submitButton.classList.remove('loading');
+            buttonText.textContent = 'Create Account';
+        }
+
+        // Prevent double-tap zoom on buttons (iOS Safari)
+        document.addEventListener('touchend', function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                e.preventDefault();
+            }
+        }, false);
+
+        // Enhanced keyboard navigation for mobile
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+                const form = e.target.closest('form');
+                const inputs = Array.from(form.querySelectorAll('input'));
+                const currentIndex = inputs.indexOf(e.target);
+                
+                if (currentIndex < inputs.length - 1) {
+                    e.preventDefault();
+                    inputs[currentIndex + 1].focus();
+                }
+            }
+        });
+
+        // Auto-focus first input on larger screens only
+        if (window.innerWidth > 768) {
+            document.getElementById('username').focus();
+        }
+    </script>
+</body>
+</html>
