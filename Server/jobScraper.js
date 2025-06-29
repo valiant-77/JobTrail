@@ -408,8 +408,8 @@ class JobScraper {
             company: jobData.company || 'Unknown Company',
             platform: platform,
             jobLink: url,
-            role: jobData.role || 'Unknown Position',
-            location: jobData.location || 'Not specified',
+            role: jobData.role || 'Role',
+            location: jobData.location || 'Location',
             status: 'applied',
             notes: '',
             description: jobData.description || '',
@@ -426,8 +426,8 @@ class JobScraper {
             company: `Company from ${domain}`,
             platform: platform,
             jobLink: url,
-            role: 'Position (Please update manually)',
-            location: 'Not specified',
+            role: 'Role',
+            location: 'Location',
             status: 'applied',
             notes: ''
         };
